@@ -11,7 +11,7 @@
  ************************************************************************************** */
 package org.eclipse.keyple.plugin.cardresource;
 
-import java.util.SortedSet;
+import java.util.Set;
 import org.eclipse.keyple.core.common.CommonApiProperties;
 import org.eclipse.keyple.core.plugin.PluginApiProperties;
 import org.eclipse.keyple.core.plugin.spi.PoolPluginFactorySpi;
@@ -22,7 +22,8 @@ import org.eclipse.keyple.core.plugin.spi.PoolPluginSpi;
  * CardResourcePluginFactory} and {@link PoolPluginFactorySpi} interfaces.
  *
  * <p>It is used to create an instance of the {@link CardResourcePluginAdapter} class, which
- * provides allocation mechanisms for readers based on group references via a Pool Plugin interface.
+ * provides allocation mechanisms for readers based on card resource profile names via a Pool Plugin
+ * interface.
  *
  * @since 1.0.0
  */
@@ -36,10 +37,17 @@ final class CardResourcePluginFactoryAdapter
    */
   static final String PLUGIN_NAME = "CardResourcePlugin";
 
-  private final SortedSet<String> readerGroupReferences;
+  private final Set<String> cardResourceProfileNames;
 
-  CardResourcePluginFactoryAdapter(SortedSet<String> readerGroupReferences) {
-    this.readerGroupReferences = readerGroupReferences;
+  /**
+   * Constructs a new CardResourcePluginFactoryAdapter with the specified set of card resource
+   * profile names.
+   *
+   * @param cardResourceProfileNames A set of card resource profile names to be used by the plugin.
+   * @since 1.0.0
+   */
+  CardResourcePluginFactoryAdapter(Set<String> cardResourceProfileNames) {
+    this.cardResourceProfileNames = cardResourceProfileNames;
   }
 
   /**
@@ -79,6 +87,6 @@ final class CardResourcePluginFactoryAdapter
    */
   @Override
   public PoolPluginSpi getPoolPlugin() {
-    return new CardResourcePluginAdapter(readerGroupReferences);
+    return new CardResourcePluginAdapter(cardResourceProfileNames);
   }
 }

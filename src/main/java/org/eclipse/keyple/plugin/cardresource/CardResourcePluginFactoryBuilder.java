@@ -11,72 +11,75 @@
  ************************************************************************************** */
 package org.eclipse.keyple.plugin.cardresource;
 
-import java.util.Collection;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import org.eclipse.keyple.core.util.Assert;
 
 /**
  * This class is a builder for {@link CardResourcePluginFactory} instances.
  *
- * <p>It allows to add reader group references to the factory, which can then allocate readers based
- * on the specified groups.
+ * <p>It allows to add reader card resource profile names to the factory, which can then create a
+ * {@link CardResourcePlugin} to allocate readers based on the specified card resource profiles.
  *
  * @since 1.0.0
  */
 public final class CardResourcePluginFactoryBuilder {
 
-  private final SortedSet<String> readerGroupReferences = new TreeSet<String>();
-
-  /** Private constructor to force the use of the static factory method {@link #getInstance()}. */
+  /** Private constructor to force the use of the static factory method {@link #builder()}. */
   private CardResourcePluginFactoryBuilder() {}
 
   /**
-   * Creates a new instance of the builder.
+   * Creates builder to build a {@link CardResourcePluginFactory}.
    *
-   * @return a new instance of the builder.
+   * @return created builder
    * @since 1.0.0
    */
-  public static CardResourcePluginFactoryBuilder getInstance() {
-    return new CardResourcePluginFactoryBuilder();
+  public static Builder builder() {
+    return new Builder();
   }
 
   /**
-   * Adds a reader group reference to the builder.
+   * Builder to build a {@link CardResourcePluginFactory}.
    *
-   * @param reference the reference of the reader group to add.
-   * @return this builder instance, to allow method chaining.
-   * @throws IllegalArgumentException if the given reference is null.
    * @since 1.0.0
    */
-  public CardResourcePluginFactoryBuilder addReaderGroupReference(String reference) {
-    Assert.getInstance().notNull(reference, "reference");
-    readerGroupReferences.add(reference);
-    return this;
-  }
+  public static class Builder {
 
-  /**
-   * Adds a collection of reader group references to the builder.
-   *
-   * @param references the collection of references to add to the builder.
-   * @return this builder instance, to allow method chaining.
-   * @throws IllegalArgumentException if the given collection is null or contains null elements.
-   * @since 1.0.0
-   */
-  public CardResourcePluginFactoryBuilder addReaderGroupReferences(Collection<String> references) {
-    Assert.getInstance().notEmpty(references, "references");
-    readerGroupReferences.addAll(references);
-    return this;
-  }
+    private final Set<String> cardResourceProfileNames = new TreeSet<String>();
 
-  /**
-   * Builds a new instance of the {@link CardResourcePluginFactory}.
-   *
-   * @return a new instance of the {@link CardResourcePluginFactory} configured with the reader
-   *     group references added to this builder instance.
-   * @since 1.0.0
-   */
-  public CardResourcePluginFactory build() {
-    return new CardResourcePluginFactoryAdapter(readerGroupReferences);
+    /** Constructs an empty Builder. */
+    private Builder() {}
+
+    /**
+     * Adds one or more reader card resource profile names to the builder.
+     *
+     * @param cardResourceProfileNames The card resource profile names to add.
+     * @return This builder instance, to allow method chaining.
+     * @throws IllegalArgumentException If the given references array is null, empty, or contains
+     *     null or empty elements.
+     * @since 1.0.0
+     */
+    public Builder addReferences(String... cardResourceProfileNames) {
+      Assert.getInstance()
+          .notNull(cardResourceProfileNames, "cardResourceProfileNames")
+          .notEmpty(Arrays.asList(cardResourceProfileNames), "cardResourceProfileNames");
+      for (String cardResourceProfileName : cardResourceProfileNames) {
+        Assert.getInstance()
+            .notNull(cardResourceProfileName, "cardResourceProfileName")
+            .notEmpty(cardResourceProfileName, "cardResourceProfileName");
+        this.cardResourceProfileNames.add(cardResourceProfileName);
+      }
+      return this;
+    }
+
+    /**
+     * Returns an instance of {@link CardResourcePluginFactory} created from the fields set on this
+     * builder.
+     *
+     * @return A {@link CardResourcePluginFactory}
+     * @since 1.0.0
+     */
+    public CardResourcePluginFactory build() {
+      return new CardResourcePluginFactoryAdapter(cardResourceProfileNames);
+    }
   }
 }

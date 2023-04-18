@@ -14,7 +14,8 @@ package org.eclipse.keyple.plugin.cardresource;
 import org.eclipse.keyple.core.common.KeyplePluginExtensionFactory;
 
 /**
- * Card Resource plugin factory extension.
+ * API of the <b>Card Resource Plugin Factory</b> which is a {@link KeyplePluginExtensionFactory}
+ * dedicated to the creation of {@link CardResourcePlugin} instances.
  *
  * @since 1.0.0
  */

@@ -16,6 +16,7 @@ import org.eclipse.keyple.core.common.KeypleReaderExtension;
 import org.eclipse.keyple.core.plugin.CardIOException;
 import org.eclipse.keyple.core.plugin.ReaderIOException;
 import org.eclipse.keyple.core.plugin.spi.reader.PoolReaderSpi;
+import org.eclipse.keyple.core.plugin.spi.reader.ReaderSpi;
 import org.eclipse.keyple.core.service.Plugin;
 import org.eclipse.keyple.core.service.SmartCardService;
 import org.eclipse.keyple.core.service.SmartCardServiceProvider;
@@ -25,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Card Resource reader extension adapter.
+ * Adapter of {@link CardResourceReader}.
  *
  * @since 1.0.0
  */
@@ -33,9 +34,9 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
 
   private static final Logger logger = LoggerFactory.getLogger(CardResourceReaderAdapter.class);
 
-  private final CardResource cardResource;
-  private final PoolReaderSpi poolReaderSpi;
-  private final SmartCard smartCard;
+  private CardResource cardResource;
+  private ReaderSpi readerSpi;
+  private SmartCard smartcard;
   private final String name;
 
   /**
@@ -46,8 +47,8 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
   CardResourceReaderAdapter(CardResource cardResource) {
     this.cardResource = cardResource;
     String readerName = cardResource.getReader().getName();
-    poolReaderSpi = getReaderExtension(readerName);
-    smartCard = cardResource.getSmartCard();
+    readerSpi = getReaderExtension(readerName);
+    smartcard = cardResource.getSmartCard();
     name = "CARD_RESOURCE_" + readerName;
   }
 
@@ -60,14 +61,29 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
   }
 
   /**
-   * @param readerName The reader name.
-   * @return The reader extension of the reader whose name is provided.
+   * Unlinks the card resource by setting the cardResource, readerSpi, and smartcard references to
+   * null.
+   *
+   * <p>This method can be used to release the resources associated with the cardResource,
+   * readerSpi, and smartcard when they are no longer needed.
+   *
+   * @since 1.0.0
    */
-  private static PoolReaderSpi getReaderExtension(String readerName) {
+  void unlinkCardResource() {
+    cardResource = null;
+    readerSpi = null;
+    smartcard = null;
+  }
+
+  /**
+   * @param readerName The reader name.
+   * @return The reader extension for the reader with the specified name, or null if not found.
+   */
+  private static ReaderSpi getReaderExtension(String readerName) {
     SmartCardService smartCardService = SmartCardServiceProvider.getService();
     for (Plugin plugin : smartCardService.getPlugins()) {
       if (plugin.getReaderNames().contains(readerName)) {
-        return (PoolReaderSpi) plugin.getReaderExtension(KeypleReaderExtension.class, readerName);
+        return (ReaderSpi) plugin.getReaderExtension(KeypleReaderExtension.class, readerName);
       }
     }
     return null;
@@ -143,7 +159,7 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
    */
   @Override
   public String getPowerOnData() {
-    String powerOnData = smartCard.getPowerOnData();
+    String powerOnData = smartcard.getPowerOnData();
     if (logger.isTraceEnabled()) {
       logger.trace("Get power on requested. ATR = {}", powerOnData);
     }
@@ -160,7 +176,7 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
     if (logger.isTraceEnabled()) {
       logger.trace("APDU_REQ = {}", HexUtil.toHex(apduIn));
     }
-    return poolReaderSpi.transmitApdu(apduIn);
+    return readerSpi.transmitApdu(apduIn);
   }
 
   /**
@@ -170,7 +186,7 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
    */
   @Override
   public boolean isContactless() {
-    return poolReaderSpi.isContactless();
+    return readerSpi.isContactless();
   }
 
   /**
@@ -190,6 +206,6 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
    */
   @Override
   public Object getSelectedSmartCard() {
-    return smartCard;
+    return smartcard;
   }
 }
