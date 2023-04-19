@@ -11,7 +11,7 @@
  ************************************************************************************** */
 package org.eclipse.keyple.plugin.cardresource;
 
-import java.util.Set;
+import java.util.Collection;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.eclipse.keyple.core.plugin.PluginIOException;
@@ -32,18 +32,21 @@ final class CardResourcePluginAdapter implements CardResourcePlugin, PoolPluginS
 
   private static final Logger logger = LoggerFactory.getLogger(CardResourcePluginAdapter.class);
 
+  private final String pluginName;
   private final SortedSet<String> cardResourceProfileNames = new TreeSet<String>();
   private final CardResourceService cardResourceService;
 
   /**
-   * Constructs a new instance of the {@link CardResourcePluginAdapter} class with the specified set
-   * of card resource profile names.
+   * Constructs a new instance of the {@link CardResourcePluginAdapter} class with the specified
+   * plugin name and collection of card resource profile names.
    *
-   * @param cardResourceProfileNames A set of card resource profile names that represent the
+   * @param pluginName The name of the plugin.
+   * @param cardResourceProfileNames A collection of card resource profile names that represent the
    *     resources managed by the plugin adapter.
    * @since 1.0.0
    */
-  CardResourcePluginAdapter(Set<String> cardResourceProfileNames) {
+  CardResourcePluginAdapter(String pluginName, Collection<String> cardResourceProfileNames) {
+    this.pluginName = pluginName;
     this.cardResourceProfileNames.addAll(cardResourceProfileNames);
     cardResourceService = CardResourceServiceProvider.getService();
   }
@@ -55,7 +58,7 @@ final class CardResourcePluginAdapter implements CardResourcePlugin, PoolPluginS
    */
   @Override
   public String getName() {
-    return CardResourcePluginFactoryAdapter.PLUGIN_NAME;
+    return pluginName;
   }
 
   /**

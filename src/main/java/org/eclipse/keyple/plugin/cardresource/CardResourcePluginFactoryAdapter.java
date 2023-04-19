@@ -11,7 +11,7 @@
  ************************************************************************************** */
 package org.eclipse.keyple.plugin.cardresource;
 
-import java.util.Set;
+import java.util.Collection;
 import org.eclipse.keyple.core.common.CommonApiProperties;
 import org.eclipse.keyple.core.plugin.PluginApiProperties;
 import org.eclipse.keyple.core.plugin.spi.PoolPluginFactorySpi;
@@ -30,23 +30,21 @@ import org.eclipse.keyple.core.plugin.spi.PoolPluginSpi;
 final class CardResourcePluginFactoryAdapter
     implements CardResourcePluginFactory, PoolPluginFactorySpi {
 
-  /**
-   * The unique name of the plugin.
-   *
-   * @since 1.0.0
-   */
-  static final String PLUGIN_NAME = "CardResourcePlugin";
+  private final String pluginName;
 
-  private final Set<String> cardResourceProfileNames;
+  private final Collection<String> cardResourceProfileNames;
 
   /**
    * Constructs a new CardResourcePluginFactoryAdapter with the specified set of card resource
    * profile names.
    *
-   * @param cardResourceProfileNames A set of card resource profile names to be used by the plugin.
+   * @param pluginName
+   * @param cardResourceProfileNames A collection of card resource profile names to be used by the
+   *     plugin.
    * @since 1.0.0
    */
-  CardResourcePluginFactoryAdapter(Set<String> cardResourceProfileNames) {
+  CardResourcePluginFactoryAdapter(String pluginName, Collection<String> cardResourceProfileNames) {
+    this.pluginName = pluginName;
     this.cardResourceProfileNames = cardResourceProfileNames;
   }
 
@@ -77,7 +75,7 @@ final class CardResourcePluginFactoryAdapter
    */
   @Override
   public String getPoolPluginName() {
-    return PLUGIN_NAME;
+    return pluginName;
   }
 
   /**
@@ -87,6 +85,6 @@ final class CardResourcePluginFactoryAdapter
    */
   @Override
   public PoolPluginSpi getPoolPlugin() {
-    return new CardResourcePluginAdapter(cardResourceProfileNames);
+    return new CardResourcePluginAdapter(pluginName, cardResourceProfileNames);
   }
 }

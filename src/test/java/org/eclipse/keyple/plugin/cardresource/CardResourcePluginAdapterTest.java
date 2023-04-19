@@ -32,6 +32,7 @@ import org.junit.Test;
 
 public class CardResourcePluginAdapterTest {
 
+  private static final String PLUGIN_NAME = "CardResourcePlugin";
   private static final String CARD_RESOURCE_PROFILE_NAME_1 = "profile1";
   private static final String CARD_RESOURCE_PROFILE_NAME_2 = "profile2";
   private static final String CARD_RESOURCE_PROFILE_NAME_3 = "profile3";
@@ -84,7 +85,7 @@ public class CardResourcePluginAdapterTest {
         .configure();
     cardResourceService.start();
 
-    adapter = new CardResourcePluginAdapter(cardResourceProfileNames);
+    adapter = new CardResourcePluginAdapter(PLUGIN_NAME, cardResourceProfileNames);
   }
 
   @After
@@ -95,15 +96,15 @@ public class CardResourcePluginAdapterTest {
 
   @Test
   public void GetName_shouldReturnPluginName() {
-    assertThat(adapter.getName()).isEqualTo(CardResourcePluginFactoryAdapter.PLUGIN_NAME);
+    assertThat(adapter.getName()).isEqualTo(PLUGIN_NAME);
   }
 
   @Test
   public void GetReaderGroupReferences_shouldReturnRegisteredReferences() {
-    SortedSet<String> expectedReferences =
+    SortedSet<String> expectedProfileNames =
         new TreeSet<String>(
             Arrays.asList(CARD_RESOURCE_PROFILE_NAME_1, CARD_RESOURCE_PROFILE_NAME_2));
-    assertThat(adapter.getReaderGroupReferences()).isEqualTo(expectedReferences);
+    assertThat(adapter.getReaderGroupReferences()).isEqualTo(expectedProfileNames);
   }
 
   @Test

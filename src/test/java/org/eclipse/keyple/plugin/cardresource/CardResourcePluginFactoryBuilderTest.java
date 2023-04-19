@@ -13,43 +13,57 @@ package org.eclipse.keyple.plugin.cardresource;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import org.eclipse.keyple.core.service.PoolPlugin;
 import org.eclipse.keyple.core.service.SmartCardServiceProvider;
+import org.junit.Before;
 import org.junit.Test;
 
 public class CardResourcePluginFactoryBuilderTest {
 
+  private static final String PLUGIN_NAME = "CardResourcePlugin";
+
+  @Before
+  public void setUp() {}
+
   @Test
-  public void build_whenAddsReferences_thenPluginContainsReferences() {
-    CardResourcePluginFactoryBuilder.Builder builder = CardResourcePluginFactoryBuilder.builder();
-    Set<String> expectedCardResourceProfileNames =
-        new HashSet<String>(Arrays.asList("profile1", "profile2"));
-    builder.addReferences("profile1", "profile2");
+  public void build_whenPluginNameAndProfileNamesAreSet_thenPluginContainsNameAndProfileNames() {
+    Collection<String> profileNames = Arrays.asList("profile1", "profile2");
+    CardResourcePluginFactoryBuilder.Builder builder =
+        CardResourcePluginFactoryBuilder.builder(PLUGIN_NAME, profileNames);
+    Set<String> expectedCardResourceProfileNames = new HashSet<String>(profileNames);
     PoolPlugin poolPlugin =
         (PoolPlugin) SmartCardServiceProvider.getService().registerPlugin(builder.build());
+    assertThat(poolPlugin.getName()).isEqualTo(PLUGIN_NAME);
     assertThat(poolPlugin.getReaderGroupReferences()).isEqualTo(expectedCardResourceProfileNames);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void builder_whenAddsEmptyReferences_thenThrowIAE() {
-    CardResourcePluginFactoryBuilder.Builder builder = CardResourcePluginFactoryBuilder.builder();
-    builder.addReferences();
+  public void build_whenNullPluginName_thenThrowIAE() {
+    Collection<String> profileNames = Arrays.asList("profile1");
+    CardResourcePluginFactoryBuilder.builder(null, profileNames);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void builder_whenAddsNullReferences_thenThrowIAE() {
-    CardResourcePluginFactoryBuilder.Builder builder = CardResourcePluginFactoryBuilder.builder();
-    String[] references = null;
-    builder.addReferences(references);
+  public void build_whenEmptyPluginName_thenThrowIAE() {
+    Collection<String> profileNames = Arrays.asList("profile1");
+    CardResourcePluginFactoryBuilder.builder("", profileNames);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void builder_whenAddsNullReference_thenThrowIAE() {
-    CardResourcePluginFactoryBuilder.Builder builder = CardResourcePluginFactoryBuilder.builder();
-    String[] references = {"profile1", null, "profile2"};
-    builder.addReferences(references);
+  public void builder_whenEmptyProfileNames_thenThrowIAE() {
+    CardResourcePluginFactoryBuilder.builder(PLUGIN_NAME, Collections.<String>emptyList());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void builder_whenNullProfileNames_thenThrowIAE() {
+    CardResourcePluginFactoryBuilder.builder(PLUGIN_NAME, null);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void builder_whenNullProfileName_thenThrowIAE() {
+    Collection<String> profileNames = Arrays.asList("profile1", null, "profile2");
+    CardResourcePluginFactoryBuilder.Builder builder =
+        CardResourcePluginFactoryBuilder.builder(PLUGIN_NAME, profileNames);
   }
 }
