@@ -4,8 +4,8 @@
 
 plugins {
   java
-  id("com.diffplug.spotless") version "6.18.0"
-  id("org.sonarqube") version "4.0.0.2929"
+  id("com.diffplug.spotless") version "5.10.2"
+  id("org.sonarqube") version "3.1"
   jacoco
 }
 
@@ -31,9 +31,7 @@ repositories {
 }
 
 dependencies {
-  implementation("org.calypsonet.terminal:calypsonet-terminal-reader-java-api:1.2.+") {
-    isChanging = true
-  }
+  implementation("org.calypsonet.terminal:calypsonet-terminal-reader-java-api:1.2.0")
   implementation("org.eclipse.keyple:keyple-common-java-api:2.0.0")
   implementation("org.eclipse.keyple:keyple-plugin-java-api:2.1.0-SNAPSHOT") { isChanging = true }
   implementation("org.eclipse.keyple:keyple-service-resource-java-lib:2.1.0-SNAPSHOT") {
@@ -71,10 +69,6 @@ tasks {
       importOrder("java", "javax", "org", "com", "")
       removeUnusedImports()
       googleJavaFormat()
-    }
-    kotlinGradle {
-      target("build.gradle.kts") // default target for kotlinGradle
-      ktfmt()
     }
   }
   test {

@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Adapter of {@link CardResourcePlugin}.
+ * Adapter of {@link CardResourcePlugin} and {@link PoolPluginSpi}.
  *
  * @since 1.0.0
  */
@@ -37,9 +37,7 @@ final class CardResourcePluginAdapter implements CardResourcePlugin, PoolPluginS
   private final CardResourceService cardResourceService;
 
   /**
-   * Constructs a new instance of the {@link CardResourcePluginAdapter} class with the specified
-   * plugin name and collection of card resource profile names. The card resource service is also
-   * required to ensure that the application developer is aware that the service is needed.
+   * Constructor.
    *
    * @param pluginName The name of the plugin.
    * @param cardResourceService The card resource service.
@@ -83,10 +81,6 @@ final class CardResourcePluginAdapter implements CardResourcePlugin, PoolPluginS
    */
   @Override
   public ReaderSpi allocateReader(String cardResourceProfileName) throws PluginIOException {
-    if (logger.isTraceEnabled()) {
-      logger.trace(
-          "Reader allocation requested. CARD_RESOURCE_PROFILE_NAME = {}", cardResourceProfileName);
-    }
     CardResource cardResource;
     try {
       cardResource = cardResourceService.getCardResource(cardResourceProfileName);
@@ -104,9 +98,6 @@ final class CardResourcePluginAdapter implements CardResourcePlugin, PoolPluginS
    */
   @Override
   public void releaseReader(ReaderSpi readerSpi) {
-    if (logger.isTraceEnabled()) {
-      logger.trace("Reader release request READER_NAME = {}.", readerSpi.getName());
-    }
     CardResource cardResource = ((CardResourceReaderAdapter) readerSpi).getCardResource();
     if (cardResource != null) {
       cardResourceService.releaseCardResource(cardResource);

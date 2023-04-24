@@ -16,11 +16,7 @@ import org.eclipse.keyple.core.service.resource.CardResourceService;
 import org.eclipse.keyple.core.util.Assert;
 
 /**
- * This class is a builder for {@link CardResourcePluginFactory} instances.
- *
- * <p>It allows to set the plugin name and one or more reader card resource profile names to the
- * factory, which can then create a {@link CardResourcePlugin} to allocate readers based on the
- * specified card resource profiles.
+ * Builds instances of {@link CardResourcePluginFactory}.
  *
  * @since 1.0.0
  */
@@ -33,13 +29,12 @@ public final class CardResourcePluginFactoryBuilder {
   private CardResourcePluginFactoryBuilder() {}
 
   /**
-   * Creates a builder to build a {@link CardResourcePluginFactory}. Sets the plugin name and one or
-   * more reader card resource profile names.
+   * Creates a builder to build a {@link CardResourcePluginFactory}.
    *
    * @param pluginName The name of the plugin.
-   * @param cardResourceService The card resource service.
-   * @param cardResourceProfileNames The card resource profile names to set.
-   * @return created builder
+   * @param cardResourceService The card resource service to use. It must be configured and started.
+   * @param cardResourceProfileNames The card resource profile names to use.
+   * @return A new builder instance.
    * @throws IllegalArgumentException If the one of the given references is null, empty, or contains
    *     null or empty elements.
    * @since 1.0.0
@@ -59,24 +54,18 @@ public final class CardResourcePluginFactoryBuilder {
   }
 
   /**
-   * Creates a builder to build a {@link CardResourcePluginFactory}. Sets the plugin name and a
-   * single reader card resource profile names.
+   * Creates a builder to build a {@link CardResourcePluginFactory}.
    *
    * @param pluginName The name of the plugin.
-   * @param cardResourceService The card resource service.
-   * @param cardResourceProfileName The card resource profile name to set.
-   * @return created builder
-   * @throws IllegalArgumentException If the one of the given references is null, empty, or contains
-   *     null or empty elements.
+   * @param cardResourceService The card resource service to use. It must be configured and started.
+   * @param cardResourceProfileName The card resource profile name to use.
+   * @return A new builder instance.
+   * @throws IllegalArgumentException If the one of the given references is null or empty.
    * @since 1.0.0
    */
   public static Builder builder(
       String pluginName, CardResourceService cardResourceService, String cardResourceProfileName) {
-    Assert.getInstance()
-        .notEmpty(pluginName, "pluginName")
-        .notEmpty(cardResourceProfileName, "cardResourceProfileName");
-    return new Builder(
-        pluginName, cardResourceService, Collections.singleton(cardResourceProfileName));
+    return builder(pluginName, cardResourceService, Collections.singleton(cardResourceProfileName));
   }
 
   /**

@@ -14,9 +14,7 @@ package org.eclipse.keyple.plugin.cardresource;
 import org.eclipse.keyple.core.common.KeypleReaderExtension;
 
 /**
- * API of the <b>ard Resource reader</b> provided by the <b>Card Resource Plugin</b>.
- *
- * <p>It is a {@link KeypleReaderExtension} of a Keyple <b>Reader</b> (not observable).
+ * Card Resource Service specific {@link KeypleReaderExtension}.
  *
  * @since 1.0.0
  */

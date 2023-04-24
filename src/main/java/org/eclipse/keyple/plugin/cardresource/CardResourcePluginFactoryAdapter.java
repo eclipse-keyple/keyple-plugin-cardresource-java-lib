@@ -19,12 +19,7 @@ import org.eclipse.keyple.core.plugin.spi.PoolPluginSpi;
 import org.eclipse.keyple.core.service.resource.CardResourceService;
 
 /**
- * The Card Resource plugin factory extension adapter provides an implementation of the {@link
- * CardResourcePluginFactory} and {@link PoolPluginFactorySpi} interfaces.
- *
- * <p>It is used to create an instance of the {@link CardResourcePluginAdapter} class, which
- * provides allocation mechanisms for readers based on card resource profile names via a Pool Plugin
- * interface.
+ * Adapter of {@link CardResourcePluginFactory} and {@link PoolPluginFactorySpi}.
  *
  * @since 1.0.0
  */
@@ -32,12 +27,11 @@ final class CardResourcePluginFactoryAdapter
     implements CardResourcePluginFactory, PoolPluginFactorySpi {
 
   private final String pluginName;
-  private final Collection<String> cardResourceProfileNames;
   private final CardResourceService cardResourceService;
+  private final Collection<String> cardResourceProfileNames;
 
   /**
-   * Constructs a new CardResourcePluginFactoryAdapter with the specified set of card resource
-   * profile names.
+   * Constructor.
    *
    * @param pluginName The name of the plugin.
    * @param cardResourceService The card resource service.

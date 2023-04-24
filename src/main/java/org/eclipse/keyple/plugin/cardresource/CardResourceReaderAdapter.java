@@ -17,22 +17,17 @@ import org.eclipse.keyple.core.plugin.ReaderIOException;
 import org.eclipse.keyple.core.plugin.spi.reader.PoolReaderSpi;
 import org.eclipse.keyple.core.plugin.spi.reader.ReaderSpi;
 import org.eclipse.keyple.core.service.resource.CardResource;
-import org.eclipse.keyple.core.util.HexUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Adapter of {@link CardResourceReader}.
+ * Adapter of {@link CardResourceReader} and {@link PoolReaderSpi}.
  *
  * @since 1.0.0
  */
 final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderSpi {
 
-  private static final Logger logger = LoggerFactory.getLogger(CardResourceReaderAdapter.class);
-
   private CardResource cardResource;
   private ReaderSpi readerSpi;
-  private SmartCard smartcard;
+  private SmartCard selectedSmartCard;
   private final String name;
 
   /**
@@ -43,7 +38,7 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
   CardResourceReaderAdapter(CardResource cardResource) {
     this.cardResource = cardResource;
     readerSpi = (ReaderSpi) cardResource.getReaderExtension();
-    smartcard = cardResource.getSmartCard();
+    selectedSmartCard = cardResource.getSmartCard();
     name = readerSpi.getName() + " (CardResource)";
   }
 
@@ -68,31 +63,27 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
   /**
    * {@inheritDoc}
    *
-   * <p>Do not nothing since the physical channel opening is implicit through the Card Resource
-   * Service allocation process.
+   * <p>Do nothing since the physical channel opening is implicit through the Card Resource Service
+   * allocation process.
    *
    * @since 1.0.0
    */
   @Override
   public void openPhysicalChannel() {
-    if (logger.isTraceEnabled()) {
-      logger.trace("Open physical channel requested.");
-    }
+    // NOP
   }
 
   /**
    * {@inheritDoc}
    *
-   * <p>Do not nothing since the physical channel closing is implicit through the Card Resource
-   * Service de-allocation process.
+   * <p>Do nothing since the physical channel closing is implicit through the Card Resource Service
+   * de-allocation process.
    *
    * @since 1.0.0
    */
   @Override
   public void closePhysicalChannel() {
-    if (logger.isTraceEnabled()) {
-      logger.trace("Close physical channel requested.");
-    }
+    // NOP
   }
 
   /**
@@ -112,9 +103,6 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
    */
   @Override
   public boolean checkCardPresence() {
-    if (logger.isTraceEnabled()) {
-      logger.trace("Check card presence requested.");
-    }
     return true;
   }
 
@@ -125,11 +113,7 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
    */
   @Override
   public String getPowerOnData() {
-    String powerOnData = smartcard.getPowerOnData();
-    if (logger.isTraceEnabled()) {
-      logger.trace("Get power on requested. ATR = {}", powerOnData);
-    }
-    return powerOnData;
+    return selectedSmartCard.getPowerOnData();
   }
 
   /**
@@ -139,9 +123,6 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
    */
   @Override
   public byte[] transmitApdu(byte[] apduIn) throws ReaderIOException, CardIOException {
-    if (logger.isTraceEnabled()) {
-      logger.trace("APDU_REQ = {}", HexUtil.toHex(apduIn));
-    }
     return readerSpi.transmitApdu(apduIn);
   }
 
@@ -167,7 +148,7 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
   public void onUnregister() {
     cardResource = null;
     readerSpi = null;
-    smartcard = null;
+    selectedSmartCard = null;
   }
 
   /**
@@ -177,6 +158,6 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
    */
   @Override
   public Object getSelectedSmartCard() {
-    return smartcard;
+    return selectedSmartCard;
   }
 }

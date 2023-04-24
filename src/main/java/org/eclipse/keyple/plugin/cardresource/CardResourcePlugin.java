@@ -14,10 +14,7 @@ package org.eclipse.keyple.plugin.cardresource;
 import org.eclipse.keyple.core.common.KeyplePluginExtension;
 
 /**
- * Card Resource service specific {@link KeyplePluginExtension}.
- *
- * <p>The <b>Card Resource Plugin</b> provides a way to allocate readers in which a card is inserted
- * and selected. It is based on the Keyple <b>Card Resource Service</b>.
+ * Card Resource Service specific {@link KeyplePluginExtension}.
  *
  * @since 1.0.0
  */

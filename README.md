@@ -2,11 +2,11 @@
 
 ## Overview
 
-The **Keyple Card Resource Plugin** is an add-on to Keyple that utilizes the **Keyple Card Resource Service** to offer 
-group reference based reader allocation mechanisms for an application. 
+The **Keyple Card Resource Plugin** is a Keyple add-on that exposes the **Keyple Card Resource Service** as a pool 
+plugin.
 
-This plugin facilitates the allocation of card readers to multiple applications and provides a centralized management 
-of reader resources, ensuring optimal usage and performance of the available readers. 
+This pool plugin facilitates the allocation of card readers to multiple applications and provides a centralized 
+management of reader resources, ensuring optimal usage and performance of the available readers. 
 
 With the **Keyple Card Resource Plugin**, applications can easily interact with card readers in a flexible and efficient 
 way, without the need for complex resource allocation logic.
