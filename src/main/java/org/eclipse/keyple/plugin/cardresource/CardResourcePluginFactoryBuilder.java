@@ -12,6 +12,7 @@
 package org.eclipse.keyple.plugin.cardresource;
 
 import java.util.*;
+import org.eclipse.keyple.core.service.resource.CardResourceService;
 import org.eclipse.keyple.core.util.Assert;
 
 /**
@@ -27,7 +28,7 @@ public final class CardResourcePluginFactoryBuilder {
 
   /**
    * Private constructor to force the use of the static factory method {@link #builder(String,
-   * Collection)}.
+   * CardResourceService, String)}.
    */
   private CardResourcePluginFactoryBuilder() {}
 
@@ -36,20 +37,46 @@ public final class CardResourcePluginFactoryBuilder {
    * more reader card resource profile names.
    *
    * @param pluginName The name of the plugin.
+   * @param cardResourceService The card resource service.
    * @param cardResourceProfileNames The card resource profile names to set.
    * @return created builder
    * @throws IllegalArgumentException If the one of the given references is null, empty, or contains
    *     null or empty elements.
    * @since 1.0.0
    */
-  public static Builder builder(String pluginName, Collection<String> cardResourceProfileNames) {
+  public static Builder builder(
+      String pluginName,
+      CardResourceService cardResourceService,
+      Collection<String> cardResourceProfileNames) {
     Assert.getInstance()
         .notEmpty(pluginName, "pluginName")
+        .notNull(cardResourceService, "cardResourceService")
         .notEmpty(cardResourceProfileNames, "cardResourceProfileNames");
     for (String cardResourceProfileName : cardResourceProfileNames) {
       Assert.getInstance().notEmpty(cardResourceProfileName, "cardResourceProfileName");
     }
-    return new Builder(pluginName, cardResourceProfileNames);
+    return new Builder(pluginName, cardResourceService, cardResourceProfileNames);
+  }
+
+  /**
+   * Creates a builder to build a {@link CardResourcePluginFactory}. Sets the plugin name and a
+   * single reader card resource profile names.
+   *
+   * @param pluginName The name of the plugin.
+   * @param cardResourceService The card resource service.
+   * @param cardResourceProfileName The card resource profile name to set.
+   * @return created builder
+   * @throws IllegalArgumentException If the one of the given references is null, empty, or contains
+   *     null or empty elements.
+   * @since 1.0.0
+   */
+  public static Builder builder(
+      String pluginName, CardResourceService cardResourceService, String cardResourceProfileName) {
+    Assert.getInstance()
+        .notEmpty(pluginName, "pluginName")
+        .notEmpty(cardResourceProfileName, "cardResourceProfileName");
+    return new Builder(
+        pluginName, cardResourceService, Collections.singleton(cardResourceProfileName));
   }
 
   /**
@@ -60,11 +87,16 @@ public final class CardResourcePluginFactoryBuilder {
   public static class Builder {
 
     private final String pluginName;
+    private final CardResourceService cardResourceService;
     private final Collection<String> cardResourceProfileNames;
 
     /** Constructs a Builder with the factory parameters. */
-    private Builder(String pluginName, Collection<String> cardResourceProfileNames) {
+    private Builder(
+        String pluginName,
+        CardResourceService cardResourceService,
+        Collection<String> cardResourceProfileNames) {
       this.pluginName = pluginName;
+      this.cardResourceService = cardResourceService;
       this.cardResourceProfileNames = cardResourceProfileNames;
     }
 
@@ -76,7 +108,8 @@ public final class CardResourcePluginFactoryBuilder {
      * @since 1.0.0
      */
     public CardResourcePluginFactory build() {
-      return new CardResourcePluginFactoryAdapter(pluginName, cardResourceProfileNames);
+      return new CardResourcePluginFactoryAdapter(
+          pluginName, cardResourceService, cardResourceProfileNames);
     }
   }
 }

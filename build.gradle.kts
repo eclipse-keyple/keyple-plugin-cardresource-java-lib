@@ -36,8 +36,9 @@ dependencies {
   }
   implementation("org.eclipse.keyple:keyple-common-java-api:2.0.0")
   implementation("org.eclipse.keyple:keyple-plugin-java-api:2.1.0-SNAPSHOT") { isChanging = true }
-  implementation("org.eclipse.keyple:keyple-service-java-lib:2.2.0-SNAPSHOT") { isChanging = true }
-  implementation("org.eclipse.keyple:keyple-service-resource-java-lib:2.0.2")
+  implementation("org.eclipse.keyple:keyple-service-resource-java-lib:2.1.0-SNAPSHOT") {
+    isChanging = true
+  }
   implementation("org.eclipse.keyple:keyple-util-java-lib:2.3.0")
   implementation("org.slf4j:slf4j-api:1.7.32")
   testImplementation("org.slf4j:slf4j-simple:1.7.32")
@@ -45,8 +46,7 @@ dependencies {
   testImplementation("org.eclipse.keyple:keyple-plugin-stub-java-lib:2.1.0")
   testImplementation("junit:junit:4.13.2")
   testImplementation("org.assertj:assertj-core:3.19.0")
-  testImplementation("org.powermock:powermock-module-junit4:2.0.9")
-  testImplementation("org.powermock:powermock-api-mockito2:2.0.9")
+  testImplementation("org.mockito:mockito-core:2.28.2")
 }
 
 val javaSourceLevel: String by project

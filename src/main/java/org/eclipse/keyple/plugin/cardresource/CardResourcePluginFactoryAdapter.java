@@ -16,6 +16,7 @@ import org.eclipse.keyple.core.common.CommonApiProperties;
 import org.eclipse.keyple.core.plugin.PluginApiProperties;
 import org.eclipse.keyple.core.plugin.spi.PoolPluginFactorySpi;
 import org.eclipse.keyple.core.plugin.spi.PoolPluginSpi;
+import org.eclipse.keyple.core.service.resource.CardResourceService;
 
 /**
  * The Card Resource plugin factory extension adapter provides an implementation of the {@link
@@ -31,20 +32,25 @@ final class CardResourcePluginFactoryAdapter
     implements CardResourcePluginFactory, PoolPluginFactorySpi {
 
   private final String pluginName;
-
   private final Collection<String> cardResourceProfileNames;
+  private final CardResourceService cardResourceService;
 
   /**
    * Constructs a new CardResourcePluginFactoryAdapter with the specified set of card resource
    * profile names.
    *
-   * @param pluginName
+   * @param pluginName The name of the plugin.
+   * @param cardResourceService The card resource service.
    * @param cardResourceProfileNames A collection of card resource profile names to be used by the
    *     plugin.
    * @since 1.0.0
    */
-  CardResourcePluginFactoryAdapter(String pluginName, Collection<String> cardResourceProfileNames) {
+  CardResourcePluginFactoryAdapter(
+      String pluginName,
+      CardResourceService cardResourceService,
+      Collection<String> cardResourceProfileNames) {
     this.pluginName = pluginName;
+    this.cardResourceService = cardResourceService;
     this.cardResourceProfileNames = cardResourceProfileNames;
   }
 
@@ -85,6 +91,6 @@ final class CardResourcePluginFactoryAdapter
    */
   @Override
   public PoolPluginSpi getPoolPlugin() {
-    return new CardResourcePluginAdapter(pluginName, cardResourceProfileNames);
+    return new CardResourcePluginAdapter(pluginName, cardResourceService, cardResourceProfileNames);
   }
 }

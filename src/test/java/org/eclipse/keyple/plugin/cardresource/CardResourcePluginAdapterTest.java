@@ -12,25 +12,28 @@
 package org.eclipse.keyple.plugin.cardresource;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.eclipse.keyple.card.generic.GenericCardSelection;
-import org.eclipse.keyple.card.generic.GenericExtensionService;
+import org.calypsonet.terminal.reader.CardReader;
+import org.calypsonet.terminal.reader.selection.spi.SmartCard;
+import org.eclipse.keyple.core.common.KeypleReaderExtension;
 import org.eclipse.keyple.core.plugin.PluginIOException;
 import org.eclipse.keyple.core.plugin.spi.reader.ReaderSpi;
-import org.eclipse.keyple.core.service.Plugin;
-import org.eclipse.keyple.core.service.SmartCardServiceProvider;
 import org.eclipse.keyple.core.service.resource.*;
-import org.eclipse.keyple.core.service.resource.spi.CardResourceProfileExtension;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class CardResourcePluginAdapterTest {
+
+  private static final String CONTACT_READER_NAME = "Reader1";
+
+  interface ReaderExtension extends KeypleReaderExtension, ReaderSpi {}
 
   private static final String PLUGIN_NAME = "CardResourcePlugin";
   private static final String CARD_RESOURCE_PROFILE_NAME_1 = "profile1";
@@ -39,64 +42,41 @@ public class CardResourcePluginAdapterTest {
   private final Set<String> cardResourceProfileNames =
       new HashSet<String>(
           Arrays.asList(CARD_RESOURCE_PROFILE_NAME_1, CARD_RESOURCE_PROFILE_NAME_2));
-  private final StubUtil stubUtil = new StubUtil();
-  private Plugin plugin;
   private CardResourceService cardResourceService;
-  private CardResourcePluginAdapter adapter;
+  private CardResource cardResource;
+  private CardResourcePluginAdapter pluginAdapter;
 
   @Before
-  public void setUp() throws InterruptedException {
+  public void setUp() {
+    CardReader reader = mock(CardReader.class);
+    SmartCard smartCard = mock(SmartCard.class);
 
-    stubUtil.initPluginAndReader();
-    plugin = stubUtil.getPlugin();
+    ReaderExtension readerExtension = mock(ReaderExtension.class);
+    when(readerExtension.getName()).thenReturn(CONTACT_READER_NAME);
 
-    GenericCardSelection cardSelection1 =
-        GenericExtensionService.getInstance()
-            .createCardSelection()
-            .filterByPowerOnData(StubUtil.POWER_ON_DATA);
+    cardResource = mock(CardResource.class);
+    when(cardResource.getReader()).thenReturn(reader);
+    when(cardResource.getReaderExtension()).thenReturn(readerExtension);
+    when(cardResource.getSmartCard()).thenReturn(smartCard);
 
-    CardResourceProfileExtension cardResourceExtension1 =
-        GenericExtensionService.getInstance().createCardResourceProfileExtension(cardSelection1);
+    cardResourceService = mock(CardResourceService.class);
+    when(cardResourceService.getCardResource(CARD_RESOURCE_PROFILE_NAME_1))
+        .thenReturn(cardResource);
+    when(cardResourceService.getCardResource(CARD_RESOURCE_PROFILE_NAME_3))
+        .thenThrow(IllegalArgumentException.class);
 
-    GenericCardSelection cardSelection2 =
-        GenericExtensionService.getInstance()
-            .createCardSelection()
-            .filterByPowerOnData(StubUtil.POWER_ON_DATA);
-
-    CardResourceProfileExtension cardResourceExtension2 =
-        GenericExtensionService.getInstance().createCardResourceProfileExtension(cardSelection2);
-
-    cardResourceService = CardResourceServiceProvider.getService();
-    cardResourceService
-        .getConfigurator()
-        .withPlugins(
-            PluginsConfigurator.builder()
-                .addPlugin(plugin, new StubUtil.ReaderConfigurator())
-                .build())
-        .withCardResourceProfiles(
-            CardResourceProfileConfigurator.builder(
-                    CARD_RESOURCE_PROFILE_NAME_1, cardResourceExtension1)
-                .withReaderNameRegex(StubUtil.CONTACT_READER_NAME)
-                .build(),
-            CardResourceProfileConfigurator.builder(
-                    CARD_RESOURCE_PROFILE_NAME_2, cardResourceExtension2)
-                .withReaderNameRegex(StubUtil.CONTACTLESS_READER_NAME)
-                .build())
-        .configure();
-    cardResourceService.start();
-
-    adapter = new CardResourcePluginAdapter(PLUGIN_NAME, cardResourceProfileNames);
+    pluginAdapter =
+        new CardResourcePluginAdapter(PLUGIN_NAME, cardResourceService, cardResourceProfileNames);
   }
 
   @After
   public void tearDown() {
     cardResourceService.stop();
-    SmartCardServiceProvider.getService().unregisterPlugin(plugin.getName());
   }
 
   @Test
   public void GetName_shouldReturnPluginName() {
-    assertThat(adapter.getName()).isEqualTo(PLUGIN_NAME);
+    assertThat(pluginAdapter.getName()).isEqualTo(PLUGIN_NAME);
   }
 
   @Test
@@ -104,43 +84,42 @@ public class CardResourcePluginAdapterTest {
     SortedSet<String> expectedProfileNames =
         new TreeSet<String>(
             Arrays.asList(CARD_RESOURCE_PROFILE_NAME_1, CARD_RESOURCE_PROFILE_NAME_2));
-    assertThat(adapter.getReaderGroupReferences()).isEqualTo(expectedProfileNames);
+    assertThat(pluginAdapter.getReaderGroupReferences()).isEqualTo(expectedProfileNames);
   }
 
   @Test
   public void AllocateReader_whenReaderExists_shouldReturnReader() throws PluginIOException {
-    ReaderSpi allocatedReader = adapter.allocateReader(CARD_RESOURCE_PROFILE_NAME_1);
+    when(cardResourceService.getCardResource(CARD_RESOURCE_PROFILE_NAME_1))
+        .thenReturn(cardResource);
+    ReaderSpi allocatedReader = pluginAdapter.allocateReader(CARD_RESOURCE_PROFILE_NAME_1);
+    verify(cardResourceService).getCardResource(CARD_RESOURCE_PROFILE_NAME_1);
+    verifyNoMoreInteractions(cardResourceService);
     assertThat(allocatedReader).isInstanceOf(CardResourceReaderAdapter.class);
-    assertThat(allocatedReader.getName())
-        .isEqualTo("CARD_RESOURCE_" + StubUtil.CONTACT_READER_NAME);
+    assertThat(allocatedReader.getName()).isEqualTo(CONTACT_READER_NAME + " (CardResource)");
   }
 
   @Test(expected = PluginIOException.class)
   public void AllocateReader_whenReaderDoesntExist_shouldThrowPluginIOException()
       throws PluginIOException {
-    adapter.allocateReader(CARD_RESOURCE_PROFILE_NAME_3);
+    pluginAdapter.allocateReader(CARD_RESOURCE_PROFILE_NAME_3);
   }
 
   @Test
   public void ReleaseReader_whenReaderExists_shouldNullifyCardResource() throws PluginIOException {
-    ReaderSpi allocatedReader = adapter.allocateReader(CARD_RESOURCE_PROFILE_NAME_1);
-    assertThat(((CardResourceReaderAdapter) allocatedReader).getCardResource()).isNotNull();
-    adapter.releaseReader(allocatedReader);
-    assertThat(((CardResourceReaderAdapter) allocatedReader).getCardResource()).isNull();
+    ReaderSpi allocatedReader = pluginAdapter.allocateReader(CARD_RESOURCE_PROFILE_NAME_1);
+    cardResource = ((CardResourceReaderAdapter) allocatedReader).getCardResource();
+    pluginAdapter.releaseReader(allocatedReader);
+    verify(cardResourceService).getCardResource(CARD_RESOURCE_PROFILE_NAME_1);
+    verify(cardResourceService).releaseCardResource(cardResource);
+    verifyNoMoreInteractions(cardResourceService);
   }
 
   @Test
-  public void ReleaseReader_whenReaderDoesntExist_shouldNotThrowException()
-      throws PluginIOException {
-    ReaderSpi allocatedReader = adapter.allocateReader(CARD_RESOURCE_PROFILE_NAME_1);
+  public void OnUnregister_shouldNotInteractWithCardResourceService() throws PluginIOException {
+    ReaderSpi allocatedReader = pluginAdapter.allocateReader(CARD_RESOURCE_PROFILE_NAME_1);
     assertThat(((CardResourceReaderAdapter) allocatedReader).getCardResource()).isNotNull();
-    adapter.releaseReader(allocatedReader);
-    assertThat(((CardResourceReaderAdapter) allocatedReader).getCardResource()).isNull();
-    adapter.releaseReader(allocatedReader);
-  }
-
-  @Test
-  public void testOnUnregister() {
-    adapter.onUnregister(); // Method does nothing, nothing to assert
+    pluginAdapter.onUnregister();
+    verify(cardResourceService).getCardResource(CARD_RESOURCE_PROFILE_NAME_1);
+    verifyNoMoreInteractions(cardResourceService);
   }
 }

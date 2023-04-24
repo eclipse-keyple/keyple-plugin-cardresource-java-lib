@@ -11,6 +11,7 @@
  ************************************************************************************** */
 package org.eclipse.keyple.plugin.cardresource;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -19,7 +20,6 @@ import org.eclipse.keyple.core.plugin.spi.PoolPluginSpi;
 import org.eclipse.keyple.core.plugin.spi.reader.ReaderSpi;
 import org.eclipse.keyple.core.service.resource.CardResource;
 import org.eclipse.keyple.core.service.resource.CardResourceService;
-import org.eclipse.keyple.core.service.resource.CardResourceServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,22 +33,27 @@ final class CardResourcePluginAdapter implements CardResourcePlugin, PoolPluginS
   private static final Logger logger = LoggerFactory.getLogger(CardResourcePluginAdapter.class);
 
   private final String pluginName;
-  private final SortedSet<String> cardResourceProfileNames = new TreeSet<String>();
+  private final Collection<String> cardResourceProfileNames;
   private final CardResourceService cardResourceService;
 
   /**
    * Constructs a new instance of the {@link CardResourcePluginAdapter} class with the specified
-   * plugin name and collection of card resource profile names.
+   * plugin name and collection of card resource profile names. The card resource service is also
+   * required to ensure that the application developer is aware that the service is needed.
    *
    * @param pluginName The name of the plugin.
+   * @param cardResourceService The card resource service.
    * @param cardResourceProfileNames A collection of card resource profile names that represent the
    *     resources managed by the plugin adapter.
    * @since 1.0.0
    */
-  CardResourcePluginAdapter(String pluginName, Collection<String> cardResourceProfileNames) {
+  CardResourcePluginAdapter(
+      String pluginName,
+      CardResourceService cardResourceService,
+      Collection<String> cardResourceProfileNames) {
     this.pluginName = pluginName;
-    this.cardResourceProfileNames.addAll(cardResourceProfileNames);
-    cardResourceService = CardResourceServiceProvider.getService();
+    this.cardResourceService = cardResourceService;
+    this.cardResourceProfileNames = new ArrayList<String>(cardResourceProfileNames);
   }
 
   /**
@@ -78,7 +83,6 @@ final class CardResourcePluginAdapter implements CardResourcePlugin, PoolPluginS
    */
   @Override
   public ReaderSpi allocateReader(String cardResourceProfileName) throws PluginIOException {
-
     if (logger.isTraceEnabled()) {
       logger.trace(
           "Reader allocation requested. CARD_RESOURCE_PROFILE_NAME = {}", cardResourceProfileName);
@@ -90,7 +94,6 @@ final class CardResourcePluginAdapter implements CardResourcePlugin, PoolPluginS
       throw new PluginIOException(
           "No card resource available for profile name " + cardResourceProfileName);
     }
-
     return new CardResourceReaderAdapter(cardResource);
   }
 
@@ -107,7 +110,6 @@ final class CardResourcePluginAdapter implements CardResourcePlugin, PoolPluginS
     CardResource cardResource = ((CardResourceReaderAdapter) readerSpi).getCardResource();
     if (cardResource != null) {
       cardResourceService.releaseCardResource(cardResource);
-      ((CardResourceReaderAdapter) readerSpi).unlinkCardResource();
     } else {
       logger.warn("The provided reader was not found: {}", readerSpi.getName());
     }

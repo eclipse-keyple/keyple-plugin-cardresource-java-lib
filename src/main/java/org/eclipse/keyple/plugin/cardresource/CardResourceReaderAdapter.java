@@ -12,14 +12,10 @@
 package org.eclipse.keyple.plugin.cardresource;
 
 import org.calypsonet.terminal.reader.selection.spi.SmartCard;
-import org.eclipse.keyple.core.common.KeypleReaderExtension;
 import org.eclipse.keyple.core.plugin.CardIOException;
 import org.eclipse.keyple.core.plugin.ReaderIOException;
 import org.eclipse.keyple.core.plugin.spi.reader.PoolReaderSpi;
 import org.eclipse.keyple.core.plugin.spi.reader.ReaderSpi;
-import org.eclipse.keyple.core.service.Plugin;
-import org.eclipse.keyple.core.service.SmartCardService;
-import org.eclipse.keyple.core.service.SmartCardServiceProvider;
 import org.eclipse.keyple.core.service.resource.CardResource;
 import org.eclipse.keyple.core.util.HexUtil;
 import org.slf4j.Logger;
@@ -46,10 +42,9 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
    */
   CardResourceReaderAdapter(CardResource cardResource) {
     this.cardResource = cardResource;
-    String readerName = cardResource.getReader().getName();
-    readerSpi = getReaderExtension(readerName);
+    readerSpi = (ReaderSpi) cardResource.getReaderExtension();
     smartcard = cardResource.getSmartCard();
-    name = "CARD_RESOURCE_" + readerName;
+    name = readerSpi.getName() + " (CardResource)";
   }
 
   /**
@@ -58,35 +53,6 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
    */
   CardResource getCardResource() {
     return cardResource;
-  }
-
-  /**
-   * Unlinks the card resource by setting the cardResource, readerSpi, and smartcard references to
-   * null.
-   *
-   * <p>This method can be used to release the resources associated with the cardResource,
-   * readerSpi, and smartcard when they are no longer needed.
-   *
-   * @since 1.0.0
-   */
-  void unlinkCardResource() {
-    cardResource = null;
-    readerSpi = null;
-    smartcard = null;
-  }
-
-  /**
-   * @param readerName The reader name.
-   * @return The reader extension for the reader with the specified name, or null if not found.
-   */
-  private static ReaderSpi getReaderExtension(String readerName) {
-    SmartCardService smartCardService = SmartCardServiceProvider.getService();
-    for (Plugin plugin : smartCardService.getPlugins()) {
-      if (plugin.getReaderNames().contains(readerName)) {
-        return (ReaderSpi) plugin.getReaderExtension(KeypleReaderExtension.class, readerName);
-      }
-    }
-    return null;
   }
 
   /**
@@ -192,11 +158,16 @@ final class CardResourceReaderAdapter implements CardResourceReader, PoolReaderS
   /**
    * {@inheritDoc}
    *
+   * <p>Unlinks the card resource by setting the cardResource, readerSpi, and smartcard references
+   * to null.
+   *
    * @since 1.0.0
    */
   @Override
   public void onUnregister() {
-    // NOP
+    cardResource = null;
+    readerSpi = null;
+    smartcard = null;
   }
 
   /**
