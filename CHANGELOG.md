@@ -6,4 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2023-04-25
 This is the initial release.
+
+[1.0.0]: https://github.com/eclipse/keyple-plugin-cardresource-java-lib/releases/tag/1.0.0
