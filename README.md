@@ -1,1 +1,0 @@
-# keyple-plugin-cardresource-java-lib
