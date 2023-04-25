@@ -17,6 +17,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import org.eclipse.keyple.core.plugin.PluginIOException;
 import org.eclipse.keyple.core.plugin.spi.PoolPluginSpi;
+import org.eclipse.keyple.core.plugin.spi.reader.PoolReaderSpi;
 import org.eclipse.keyple.core.plugin.spi.reader.ReaderSpi;
 import org.eclipse.keyple.core.service.resource.CardResource;
 import org.eclipse.keyple.core.service.resource.CardResourceService;
@@ -80,7 +81,7 @@ final class CardResourcePluginAdapter implements CardResourcePlugin, PoolPluginS
    * @since 1.0.0
    */
   @Override
-  public ReaderSpi allocateReader(String cardResourceProfileName) throws PluginIOException {
+  public PoolReaderSpi allocateReader(String cardResourceProfileName) throws PluginIOException {
     CardResource cardResource;
     try {
       cardResource = cardResourceService.getCardResource(cardResourceProfileName);
