@@ -20,7 +20,6 @@ import org.calypsonet.terminal.reader.CardReader;
 import org.calypsonet.terminal.reader.selection.spi.SmartCard;
 import org.eclipse.keyple.core.common.KeypleReaderExtension;
 import org.eclipse.keyple.core.plugin.CardIOException;
-import org.eclipse.keyple.core.plugin.ReaderIOException;
 import org.eclipse.keyple.core.plugin.spi.reader.ReaderSpi;
 import org.eclipse.keyple.core.service.resource.CardResource;
 import org.eclipse.keyple.core.util.HexUtil;
@@ -42,7 +41,7 @@ public class CardResourceReaderAdapterTest {
   private ReaderSpi readerExtension;
 
   @Before
-  public void setUp() throws ReaderIOException, CardIOException {
+  public void setUp() throws Exception {
     reader = mock(CardReader.class);
     when(reader.getName()).thenReturn(CONTACT_READER_NAME);
     when(reader.isContactless()).thenReturn(false);
@@ -151,15 +150,13 @@ public class CardResourceReaderAdapterTest {
   }
 
   @Test
-  public void transmitApdu_whenCardIsResponding_shouldReturnApduR()
-      throws ReaderIOException, CardIOException {
+  public void transmitApdu_whenCardIsResponding_shouldReturnApduR() throws Exception {
     assertThat(readerAdapter.transmitApdu(HexUtil.toByteArray(APDU_C)))
         .isEqualTo(HexUtil.toByteArray(APDU_R));
   }
 
   @Test(expected = CardIOException.class)
-  public void transmitApdu_whenCardIsNotResponding_shouldThrowCardIOException()
-      throws ReaderIOException, CardIOException {
+  public void transmitApdu_whenCardIsNotResponding_shouldThrowCardIOException() throws Exception {
     readerAdapter.transmitApdu(HexUtil.toByteArray(UNKNOWN_APDU_C));
   }
 

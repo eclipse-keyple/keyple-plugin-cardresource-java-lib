@@ -15,7 +15,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 import java.util.*;
-import org.eclipse.keyple.core.plugin.PluginIOException;
 import org.eclipse.keyple.core.plugin.spi.PoolPluginSpi;
 import org.eclipse.keyple.core.service.resource.CardResourceService;
 import org.junit.Before;
@@ -33,7 +32,7 @@ public class CardResourcePluginFactoryBuilderTest {
 
   @Test
   public void build_whenPluginNameAndProfileNamesAreSet_thenPluginContainsNameAndProfileNames()
-      throws PluginIOException {
+      throws Exception {
     String profileName = "profile1";
     CardResourcePluginFactoryBuilder.Builder builder =
         CardResourcePluginFactoryBuilder.builder(PLUGIN_NAME, cardResourceService, profileName);
@@ -46,7 +45,7 @@ public class CardResourcePluginFactoryBuilderTest {
   @Test
   public void
       build_whenPluginNameAndProfileNamesAsCollectionAreSet_thenPluginContainsNameAndProfileNames()
-          throws PluginIOException {
+          throws Exception {
     List<String> profileNames = Arrays.asList("profile1", "profile2");
     CardResourcePluginFactoryBuilder.Builder builder =
         CardResourcePluginFactoryBuilder.builder(PLUGIN_NAME, cardResourceService, profileNames);

@@ -39,6 +39,8 @@ public class CardResourcePluginAdapterTest {
   private static final String CARD_RESOURCE_PROFILE_NAME_1 = "profile1";
   private static final String CARD_RESOURCE_PROFILE_NAME_2 = "profile2";
   private static final String CARD_RESOURCE_PROFILE_NAME_3 = "profile3";
+  private static final String CARD_RESOURCE_PROFILE_NAME_4 = "profile4";
+  private static final String CARD_RESOURCE_PROFILE_NAME_5 = "profile5";
   private final Set<String> cardResourceProfileNames =
       new HashSet<String>(
           Arrays.asList(CARD_RESOURCE_PROFILE_NAME_1, CARD_RESOURCE_PROFILE_NAME_2));
@@ -64,7 +66,9 @@ public class CardResourcePluginAdapterTest {
         .thenReturn(cardResource);
     when(cardResourceService.getCardResource(CARD_RESOURCE_PROFILE_NAME_3))
         .thenThrow(IllegalArgumentException.class);
-
+    when(cardResourceService.getCardResource(CARD_RESOURCE_PROFILE_NAME_4))
+        .thenThrow(IllegalStateException.class);
+    when(cardResourceService.getCardResource(CARD_RESOURCE_PROFILE_NAME_5)).thenReturn(null);
     pluginAdapter =
         new CardResourcePluginAdapter(PLUGIN_NAME, cardResourceService, cardResourceProfileNames);
   }
@@ -88,7 +92,7 @@ public class CardResourcePluginAdapterTest {
   }
 
   @Test
-  public void AllocateReader_whenReaderExists_shouldReturnReader() throws PluginIOException {
+  public void AllocateReader_whenReaderExists_shouldReturnReader() throws Exception {
     when(cardResourceService.getCardResource(CARD_RESOURCE_PROFILE_NAME_1))
         .thenReturn(cardResource);
     ReaderSpi allocatedReader = pluginAdapter.allocateReader(CARD_RESOURCE_PROFILE_NAME_1);
@@ -99,13 +103,25 @@ public class CardResourcePluginAdapterTest {
   }
 
   @Test(expected = PluginIOException.class)
-  public void AllocateReader_whenReaderDoesntExist_shouldThrowPluginIOException()
+  public void AllocateReader_whenProfileIsNotConfigured_shouldThrowPluginIOException()
       throws PluginIOException {
     pluginAdapter.allocateReader(CARD_RESOURCE_PROFILE_NAME_3);
   }
 
+  @Test(expected = PluginIOException.class)
+  public void AllocateReader_whenServiceIsNotStarted_shouldThrowPluginIOException()
+      throws PluginIOException {
+    pluginAdapter.allocateReader(CARD_RESOURCE_PROFILE_NAME_4);
+  }
+
+  @Test(expected = PluginIOException.class)
+  public void AllocateReader_whenNoCardResourceIsAvailable_shouldThrowPluginIOException()
+      throws PluginIOException {
+    pluginAdapter.allocateReader(CARD_RESOURCE_PROFILE_NAME_5);
+  }
+
   @Test
-  public void ReleaseReader_whenReaderExists_shouldNullifyCardResource() throws PluginIOException {
+  public void ReleaseReader_whenReaderExists_shouldNullifyCardResource() throws Exception {
     ReaderSpi allocatedReader = pluginAdapter.allocateReader(CARD_RESOURCE_PROFILE_NAME_1);
     cardResource = ((CardResourceReaderAdapter) allocatedReader).getCardResource();
     pluginAdapter.releaseReader(allocatedReader);
@@ -115,7 +131,7 @@ public class CardResourcePluginAdapterTest {
   }
 
   @Test
-  public void OnUnregister_shouldNotInteractWithCardResourceService() throws PluginIOException {
+  public void OnUnregister_shouldNotInteractWithCardResourceService() throws Exception {
     ReaderSpi allocatedReader = pluginAdapter.allocateReader(CARD_RESOURCE_PROFILE_NAME_1);
     assertThat(((CardResourceReaderAdapter) allocatedReader).getCardResource()).isNotNull();
     pluginAdapter.onUnregister();

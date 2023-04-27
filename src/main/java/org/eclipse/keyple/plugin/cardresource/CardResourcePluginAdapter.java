@@ -82,12 +82,21 @@ final class CardResourcePluginAdapter implements CardResourcePlugin, PoolPluginS
    */
   @Override
   public PoolReaderSpi allocateReader(String cardResourceProfileName) throws PluginIOException {
+    if (!cardResourceProfileNames.contains(cardResourceProfileName)) {
+      throw new PluginIOException("Unauthorized card resource profile: " + cardResourceProfileName);
+    }
     CardResource cardResource;
     try {
       cardResource = cardResourceService.getCardResource(cardResourceProfileName);
+      if (cardResource == null) {
+        throw new PluginIOException(
+            "No card resource available for profile " + cardResourceProfileName);
+      }
     } catch (IllegalArgumentException e) {
       throw new PluginIOException(
-          "No card resource available for profile name " + cardResourceProfileName);
+          "Not configured card resource profile: " + cardResourceProfileName);
+    } catch (IllegalStateException e) {
+      throw new PluginIOException("Card Resource Service not started");
     }
     return new CardResourceReaderAdapter(cardResource);
   }
@@ -100,11 +109,7 @@ final class CardResourcePluginAdapter implements CardResourcePlugin, PoolPluginS
   @Override
   public void releaseReader(ReaderSpi readerSpi) {
     CardResource cardResource = ((CardResourceReaderAdapter) readerSpi).getCardResource();
-    if (cardResource != null) {
-      cardResourceService.releaseCardResource(cardResource);
-    } else {
-      logger.warn("The provided reader was not found: {}", readerSpi.getName());
-    }
+    cardResourceService.releaseCardResource(cardResource);
   }
 
   /**
