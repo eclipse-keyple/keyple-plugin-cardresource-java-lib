@@ -1,3 +1,10 @@
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=eclipse_keyple-plugin-cardresource-java-lib&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=eclipse_keyple-plugin-cardresource-java-lib)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=eclipse_keyple-plugin-cardresource-java-lib&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=eclipse_keyple-plugin-cardresource-java-lib)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=eclipse_keyple-plugin-cardresource-java-lib&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=eclipse_keyple-plugin-cardresource-java-lib)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=eclipse_keyple-plugin-cardresource-java-lib&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=eclipse_keyple-plugin-cardresource-java-lib)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=eclipse_keyple-plugin-cardresource-java-lib&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=eclipse_keyple-plugin-cardresource-java-lib)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=eclipse_keyple-plugin-cardresource-java-lib&metric=coverage)](https://sonarcloud.io/summary/new_code?id=eclipse_keyple-plugin-cardresource-java-lib)
+
 # Keyple Plugin Card Resource Java Library
 
 ## Overview
