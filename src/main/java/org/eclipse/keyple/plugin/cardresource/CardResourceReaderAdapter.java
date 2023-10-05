@@ -11,12 +11,12 @@
  ************************************************************************************** */
 package org.eclipse.keyple.plugin.cardresource;
 
-import org.calypsonet.terminal.reader.selection.spi.SmartCard;
 import org.eclipse.keyple.core.plugin.CardIOException;
 import org.eclipse.keyple.core.plugin.ReaderIOException;
 import org.eclipse.keyple.core.plugin.spi.reader.PoolReaderSpi;
 import org.eclipse.keyple.core.plugin.spi.reader.ReaderSpi;
 import org.eclipse.keyple.core.service.resource.CardResource;
+import org.eclipse.keypop.reader.selection.spi.SmartCard;
 
 /**
  * Adapter of {@link CardResourceReader} and {@link PoolReaderSpi}.
