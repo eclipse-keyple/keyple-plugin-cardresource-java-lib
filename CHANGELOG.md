@@ -12,8 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - CI: code coverage report when releasing.
 ### Upgraded
-- "Keyple Service Resource Library" to version `3.0.0`
-- "Keyple Util Library" to version `2.3.1`
+- Keyple Plugin API `2.1.0` -> `2.2.0`
+- Keyple Service Resource Library `2.1.1` -> `3.0.0`
+- Keyple Util Library `2.3.0` -> `2.3.1`
 
 ## [1.0.1] - 2023-04-27
 ### Fixed

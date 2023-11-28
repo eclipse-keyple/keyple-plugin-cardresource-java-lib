@@ -21,8 +21,6 @@ import org.eclipse.keyple.core.plugin.spi.reader.PoolReaderSpi;
 import org.eclipse.keyple.core.plugin.spi.reader.ReaderSpi;
 import org.eclipse.keyple.core.service.resource.CardResource;
 import org.eclipse.keyple.core.service.resource.CardResourceService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Adapter of {@link CardResourcePlugin} and {@link PoolPluginSpi}.
@@ -30,8 +28,6 @@ import org.slf4j.LoggerFactory;
  * @since 1.0.0
  */
 final class CardResourcePluginAdapter implements CardResourcePlugin, PoolPluginSpi {
-
-  private static final Logger logger = LoggerFactory.getLogger(CardResourcePluginAdapter.class);
 
   private final String pluginName;
   private final Collection<String> cardResourceProfileNames;
