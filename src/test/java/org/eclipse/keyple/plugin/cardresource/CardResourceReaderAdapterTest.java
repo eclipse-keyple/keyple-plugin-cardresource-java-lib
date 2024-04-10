@@ -86,19 +86,19 @@ public class CardResourceReaderAdapterTest {
   @Test
   public void openPhysicalChannel_hasNoInteraction() {
     readerAdapter.openPhysicalChannel();
-    verifyZeroInteractions(reader);
+    verifyNoInteractions(reader);
     verify(readerExtension).getName();
     verifyNoMoreInteractions(readerExtension);
-    verifyZeroInteractions(smartCard);
+    verifyNoInteractions(smartCard);
   }
 
   @Test
   public void closePhysicalChannel_hasNoInteraction() {
     readerAdapter.closePhysicalChannel();
-    verifyZeroInteractions(reader);
+    verifyNoInteractions(reader);
     verify(readerExtension).getName();
     verifyNoMoreInteractions(readerExtension);
-    verifyZeroInteractions(smartCard);
+    verifyNoInteractions(smartCard);
   }
 
   @Test
