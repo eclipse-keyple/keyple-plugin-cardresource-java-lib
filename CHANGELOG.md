@@ -5,11 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.0.1] - 2024-04-12
 ### Changed
 - Java source and target levels `1.6` -> `1.8`
 ### Upgraded
+- Keypop Reader API `2.0.0` -> `2.0.1`
+- Keyple Common API `2.0.0` -> `2.0.1`
+- Keyple Plugin API `2.2.0` -> `2.3.1`
+- Keyple Service Resource Lib `3.0.0` -> `3.0.1`
+- Keyple Util Lib `2.3.1` -> `2.4.0`
 - Gradle `6.8.3` -> `7.6.4`
-- Keyple Plugin API `2.2.0` -> `2.3.0`
 
 ## [2.0.0] - 2023-11-28
 :warning: Major version! Following the migration of the "Calypsonet Terminal" APIs to the
@@ -33,7 +39,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2023-04-25
 This is the initial release.
 
-[unreleased]: https://github.com/eclipse-keyple/keyple-plugin-cardresource-java-lib/compare/2.0.0...HEAD
+[unreleased]: https://github.com/eclipse-keyple/keyple-plugin-cardresource-java-lib/compare/2.0.1...HEAD
+[2.0.1]: https://github.com/eclipse-keyple/keyple-plugin-cardresource-java-lib/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/eclipse-keyple/keyple-plugin-cardresource-java-lib/compare/1.0.1...2.0.0
 [1.0.1]: https://github.com/eclipse-keyple/keyple-plugin-cardresource-java-lib/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/eclipse-keyple/keyple-plugin-cardresource-java-lib/releases/tag/1.0.0
