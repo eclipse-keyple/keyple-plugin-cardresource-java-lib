@@ -26,7 +26,7 @@ on the Keyple website [keyple.org](https://keyple.org).
 ## API documentation
 
 API documentation & class diagram is available online: 
-[eclipse-keyple.github.io/keyple-plugin-cardresource-java-lib](https://eclipse-keyple.github.io/keyple-plugin-cardresource-java-lib)
+[docs.keyple.org/keyple-plugin-cardresource-java-lib](https://docs.keyple.org/keyple-plugin-cardresource-java-lib)
 
 ## Examples
 
