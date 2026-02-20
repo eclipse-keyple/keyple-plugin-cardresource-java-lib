@@ -86,13 +86,13 @@ final class CardResourcePluginAdapter implements CardResourcePlugin, PoolPluginS
       cardResource = cardResourceService.getCardResource(cardResourceProfileName);
       if (cardResource == null) {
         throw new PluginIOException(
-            "No card resource available for profile " + cardResourceProfileName);
+            "No card resource available for profile '" + cardResourceProfileName + "'");
       }
     } catch (IllegalArgumentException e) {
       throw new PluginIOException(
           "Not configured card resource profile: " + cardResourceProfileName);
     } catch (IllegalStateException e) {
-      throw new PluginIOException("Card Resource Service not started");
+      throw new PluginIOException("Card Resource Service is not started");
     }
     return new CardResourceReaderAdapter(cardResource);
   }

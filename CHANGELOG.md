@@ -5,8 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.0.2] - 2026-02-20
 ### Changed
+- Normalized logging and error messages using Keyple coding standards.
 - Migrated the CI pipeline from Jenkins to GitHub Actions.
+### Upgraded
+- `keypop-reader-java-api` from `2.0.1` to `2.1.0` (source code not impacted)
+- `keyple-common-java-api` from `2.0.1` to `2.0.2` (source code not impacted)
+- `keyple-plugin-java-api` from `2.3.1` to `2.3.2` (source code not impacted)
+- `keyple-service-resource-java-lib` from `3.0.1` to `3.1.1` (source code not impacted)
+- `keyple-util-java-lib` from `2.4.0` to `2.4.1` (source code not impacted)
+- `slf4j-api` from `1.7.32` to `1.7.36` (`compileOnly`)
 
 ## [2.0.1] - 2024-04-12
 ### Changed
@@ -41,7 +51,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2023-04-25
 This is the initial release.
 
-[unreleased]: https://github.com/eclipse-keyple/keyple-plugin-cardresource-java-lib/compare/2.0.1...HEAD
+[unreleased]: https://github.com/eclipse-keyple/keyple-plugin-cardresource-java-lib/compare/2.0.2...HEAD
+[2.0.2]: https://github.com/eclipse-keyple/keyple-plugin-cardresource-java-lib/compare/2.0.1...2.0.2
 [2.0.1]: https://github.com/eclipse-keyple/keyple-plugin-cardresource-java-lib/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/eclipse-keyple/keyple-plugin-cardresource-java-lib/compare/1.0.1...2.0.0
 [1.0.1]: https://github.com/eclipse-keyple/keyple-plugin-cardresource-java-lib/compare/1.0.0...1.0.1
